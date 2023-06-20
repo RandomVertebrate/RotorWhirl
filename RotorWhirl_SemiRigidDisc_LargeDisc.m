@@ -18,18 +18,23 @@ if firstiteration
 
     fprintf('Defining system parameters...\n')
 
-    l = 136.6e-3;           % Length of rotor
-    sp1 = 57e-3;            % Distance of first support from left side
-    sp2 = 77e-3;            % Distance of second support from left side      
-    fp = 31e-3;             % Point (x-coordinate) of application of axial load
-    
     % DEFINING DISC (gas bearing disc, attached to left end of shaft)
     DiscRadius = 50.5e-3;
-    DiscThickness = 11e-3;
+    DiscThickness = 7.5e-3;
     DiscMass = 7850*pi*DiscRadius^2*DiscThickness;
     DiscJp = 0.5*DiscMass*DiscRadius^2;
     DiscJt = 0.5*DiscJp+DiscMass*DiscThickness^2/12;
     DiscLoc = DiscThickness/2;
+
+    l = 147.6e-3;           % Length of rotor
+    sp1 = 68e-3;            % Distance of first support from left side
+    sp2 = 88e-3;            % Distance of second support from left side      
+    fp = 42e-3;             % Point (x-coordinate) of application of axial load
+
+    l = l - DiscThickness;
+    sp1 = sp1 - DiscThickness;
+    sp2 = sp2 - DiscThickness;
+    fp = fp - DiscThickness;
 
     % Axial hole details for hollow shaft
     holerad = 3e-3;
@@ -38,10 +43,12 @@ if firstiteration
     % (holestart == holestop) implies no hole
     
     % DEFINING SHAFT GEOMETRY
-    baseradius = 20e-3;                             % Radius of shaft at junction with disc
-    steploc = [4 24 31 91 125.6]*1e-3;                 % Axial locations (distances from shaft-disc junction) of steps in shaft profile
-    stepval = [-12 10 -3 -3 -8]*1e-3;                   % Values of radius increments at step locations
+    baseradius = 50.5e-3;                             % Radius of shaft at junction with disc
+    steplocfrombase = [11 15 35 42 102 136.6]*1e-3;                 % Axial locations (distances from shaft-disc junction) of steps in shaft profile
+    stepval = [-30.5 -12 10 -3 -3 -8]*1e-3;                   % Values of radius increments at step locations
     
+    steploc = steplocfrombase - DiscThickness;
+
     participationslope = 1;
     
     syms xcoord

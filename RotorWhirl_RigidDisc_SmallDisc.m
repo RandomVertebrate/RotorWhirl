@@ -4,12 +4,12 @@
 % FaxPercent (Percentage of maximum axial load applied)
 % firstiteration (logical: some computer algebra skipped for subsequent iterations)
 
-processorcores = 48;
+processorcores = 4;
 delete(gcp('nocreate'));
 parpool(processorcores);
 
 if firstiteration
-    modes = 15;        % Number of assumed modes (higher = more accurate and slower)
+    modes = 8;        % Number of assumed modes (higher = more accurate and slower)
     plotres = 7;      % Resolution of Campbell diagram (increase if diagram looks garbled)
 
     % All physical quantities in SI units
@@ -21,7 +21,7 @@ if firstiteration
     l = 136.6e-3;           % Length of rotor
     sp1 = 57e-3;            % Distance of first support from left side
     sp2 = 77e-3;            % Distance of second support from left side      
-    fp = l;                 % Point (x-coordinate) of application of axial load
+    fp = 31e-3;                 % Point (x-coordinate) of application of axial load
     
     % DEFINING DISC (gas bearing disc, attached to left end of shaft)
     DiscRadius = 20.5e-3;
@@ -38,37 +38,16 @@ if firstiteration
     % (holestart == holestop) implies no hole
     
     % DEFINING SHAFT GEOMETRY
-    baseradius = 20e-3;                             % Radius of shaft at junction with disc
-    steploc = [4 24 91 125.6]*1e-3;                 % Axial locations (distances from shaft-disc junction) of steps in shaft profile
-    stepval = [-12 7 -3 -8]*1e-3;                   % Values of radius increments at step locations
-    numsteps = length(steploc);
+    baseradius = 20e-3;                            % Radius of shaft at junction with disc
+    steploc = [4 24 31 91 125.6]*1e-3;             % Axial locations (distances from shaft-disc junction) of steps in shaft profile
+    stepval = [-12 10 -3 -3 -8]*1e-3;              % Values of radius increments at step locations
     
     participationslope = 1;
     
-    ORexp = sym(baseradius);
-    OR2exp = sym(baseradius);
-    
     syms xcoord
-    
-    for i = 1:numsteps
-        ORexp = ORexp + stepval(i)*heaviside(xcoord-steploc(i));
-    end
-    
-    for i = 1:numsteps
-        if stepval(i)<0
-            rampbeg = steploc(i) + stepval(i)/participationslope;
-            rampend = steploc(i);
-            OR2exp = OR2exp - (xcoord-rampbeg)*participationslope ...
-                *heaviside(xcoord-rampbeg)*heaviside(rampend-xcoord) ...
-                + stepval(i)*heaviside(xcoord-rampend);
-        else
-            rampbeg = steploc(i);
-            rampend = steploc(i) + stepval(i)/participationslope;
-            OR2exp = OR2exp + (xcoord-rampbeg)*participationslope ...
-                *heaviside(xcoord-rampbeg)*heaviside(rampend-xcoord) ...
-                + stepval(i)*heaviside(xcoord-rampend);
-        end
-    end
+
+    ORexp = TrueShaftProfile(xcoord, baseradius, steploc, stepval);
+    OR2exp = StiffShaftProfile(xcoord, baseradius, steploc, stepval, l, participationslope);
 
     % Radius function used for linear mass density, rotational inertia, and shear stiffness
     outerradius = @(x) subs(ORexp, xcoord, x);
@@ -88,7 +67,7 @@ if firstiteration
     zeroholeradius = double(innerradius(0));
     endradius = double(outerradius(l));
     endholeradius = double(innerradius(l));
-    figure(1)
+    figure()
     clf
     plot(xvals, outerradius(xvals), 'k')
     hold on
@@ -511,7 +490,11 @@ criticalspeeds
 
 fprintf('Plotting Campbell diagram...\n')
 
-figure(2)
+if firstiteration
+    CampbellFig = figure();
+else
+    figure(CampbellFig)
+end
 
 clf
 
