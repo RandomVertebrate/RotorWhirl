@@ -1,4 +1,6 @@
+Unauthorized use/distribution NOT ALLOWED.
+
 # RotorWhirl
 Whirl prediction in rotors with an aerostatic thrust bearing at one end
 
-Unauthorized use/distribution NOT ALLOWED.
+Some (partial) context is here: https://doi.org/10.1115/GT2022-82632
