@@ -10,6 +10,6 @@ The general idea behind (an earlier version of) the whirl prediction method: htt
 ## StiffShaftProfile
 `StiffShaftProfile()` finds the effective profile as per the "45-degree rule"[^1] of a stepped shaft. For example:
 
-![ArbitStiffShaft](https://github.com/RandomVertebrate/RotorWhirl/assets/54997017/ee3aff71-387d-41d7-bfe6-9c8e14cd018d)
+![ArbitStiffShaft](https://github.com/RandomVertebrate/RotorWhirl/assets/54997017/76b25389-63f6-4f6c-8f54-819ed0a685fc)
 
 [^1]: https://ecommons.udayton.edu/graduate_theses/767 
