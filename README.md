@@ -5,7 +5,7 @@ Whirl prediction in rotors with an aerostatic thrust bearing at one end.
 
 Some of these .m files do whirl prediction. Others fit and plot curves to model aerostatic bearing behavior.
 
-The general idea behind (an earlier version of) the whirl prediction method: https://doi.org/10.1115/GT2022-82632
+The general idea behind (an earlier version of) the whirl prediction method: [Conference Paper](https://doi.org/10.1115/GT2022-82632), [Video Presentation](https://youtu.be/lfDOsH-XRDQ)
 
 ## StiffShaftProfile
 `StiffShaftProfile()` finds the effective profile as per the "45-degree rule"[^1] of a stepped shaft. For example:
