@@ -10,7 +10,13 @@ function ORexp = StiffShaftProfile(xcoord, baseradius, steploc, stepval, l, slop
 % radius and negative values are decreases.
 % l is the length of the shaft.
 
-margin = max(stepval)*1e-8;                 % Numerical margin for floating-point comparisons
+% If no steps return constant shaft radius
+if length(steploc)==0
+    ORexp = sym(baseradius);
+    return
+end
+
+margin = max(abs(stepval))*1e-8;                 % Numerical margin for floating-point comparisons
 
 numsteps = length(steploc);
 

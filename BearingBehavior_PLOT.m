@@ -22,14 +22,14 @@ M(h, theta, C1, C2, C3) = symsum(r*sin(k*phi+phi0)*f(h+theta*r*sin(k*phi+phi0)),
 
 %constants defining nonlinear spring behavior W=C1/(1+C2*h^C3) for each orifice
 %obtained by minimizing square of load capacity error relative to data from CFD or experiment
-C1val = 956.428643
-C2val = 303648875.241726
-C3val = 1.669899
+C1val = 290.120806
+C2val = 9024693618.143471
+C3val = 2.004049
 
 %Parameter value substitutions for plots
 nval = 6
 rval = 37.5e-3
-phi0val = 0
+phi0val = pi/6
 params = [n r phi0]
 values = [nval rval phi0val]
 
@@ -47,8 +47,8 @@ Ro = 50e-3
 %Alternate expression for Ro: makes minimum orifice gap zero
 %Ro = rval*max(cos(phi0val),cos(2*pi/nval-phi0val))
 
-hmicronsChoice = [10 15 20 25 30 35 40] %Select operating clearances for plotting bearing behavior
-tiltsecsChoice = [0 8.2506 12.376 16.501 24.752 37.128 49.504 74.255 ] %Select tilt values for plotting bearing behavior
+hmicronsChoice = [15 25 35] %Select operating clearances for plotting bearing behavior
+tiltsecsChoice = [24.752 37.128 49.504 74.225] %Select tilt values for plotting bearing behavior
 hmicronsmax = 40 %Upper limit of clearance for plots
 
 numhChoices = length(hmicronsChoice)
@@ -181,7 +181,7 @@ for i=1:numtiltChoices
     legendentries1(end+1)=strcat('Curve fit, tilt = ', num2str(tiltsecsChoice(i)), ' ''''');
 end
 for i=1:numtiltChoices
-    legendentries1(end+1)=strcat('CFD, tilt = ', num2str(tiltsecsChoice(i)), ' ''''');
+    legendentries1(end+1)=strcat('Numerical, tilt = ', num2str(tiltsecsChoice(i)), ' ''''');
 end
 legend(legendentries1)
 hold off
@@ -203,7 +203,7 @@ for i=1:numhChoices
     legendentries2(end+1)=strcat('Curve fit, gap = ', num2str(hmicronsChoice(i)), ' \mu{}m');
 end
 for i=1:numhChoices
-    legendentries2(end+1)=strcat('CFD, gap = ', num2str(hmicronsChoice(i)), ' \mu{}m');
+    legendentries2(end+1)=strcat('Numerical, gap = ', num2str(hmicronsChoice(i)), ' \mu{}m');
 end
 legend(legendentries2)
 hold off
@@ -225,7 +225,7 @@ for i=1:numtiltChoices
     legendentries3(end+1)=strcat('Curve fit, tilt = ', num2str(tiltsecsChoice(i)), ' ''''');
 end
 for i=1:numtiltChoices
-    legendentries3(end+1)=strcat('CFD, tilt = ', num2str(tiltsecsChoice(i)), ' ''''');
+    legendentries3(end+1)=strcat('Numerical, tilt = ', num2str(tiltsecsChoice(i)), ' ''''');
 end
 legend(legendentries3)
 hold off
@@ -247,7 +247,7 @@ for i=1:numhChoices
     legendentries4(end+1)=strcat('Curve fit, gap = ', num2str(hmicronsChoice(i)), ' \mu{}m');
 end
 for i=1:numhChoices
-    legendentries4(end+1)=strcat('CFD, gap = ', num2str(hmicronsChoice(i)), ' \mu{}m');
+    legendentries4(end+1)=strcat('Numerical, gap = ', num2str(hmicronsChoice(i)), ' \mu{}m');
 end
 legend(legendentries4)
 hold off

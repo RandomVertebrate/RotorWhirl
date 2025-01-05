@@ -21,17 +21,17 @@ syms C1 C2 C3 theta h
 
 nholes = 6 %number of evenly distributed holes
 r = 0.0375 %radial distance of holes from center of disc
-phi0 = 0 %angular coordinate of first hole (tilt axis is at zero)
+phi0 = pi/6 %angular coordinate of first hole (tilt axis is at zero)
 
 %Read CFD/Experiment data from excel file
 %Excel file has the following columns:
 %  h_microns_  Tilt_seconds_  W_kN_  Moment_Nm_
-DataTable = readtable('FitData.xlsx')
+DataTable = readtable('FitData_test_PCD75_300um_1e6.xlsx')
 NumDataPts = height(DataTable)
-data.height = DataTable.h_microns_*1e-6; %convert microns to meters
-data.tilt = DataTable.Tilt_seconds_*pi/(180*3600); %convert seconds to radians
-data.load = DataTable.W_kN_*1e3; %convert kN to N
-data.moment = DataTable.Moment_Nm_
+data.height = DataTable.h_microns*1e-6; %convert microns to meters
+data.tilt = DataTable.Tilt_seconds*pi/(180*3600); %convert seconds to radians
+data.load = DataTable.W_kN*1e3; %convert kN to N
+data.moment = DataTable.Moment_Nm
 
 %anonymous function on which fminsearch operates. Passes system parameters
 %to ForceError(), which actually calculates error.
