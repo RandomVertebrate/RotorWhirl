@@ -1,3 +1,4 @@
+
 % Uses many variables defined in RUN file
 % To be called by RUN file only
 
@@ -46,7 +47,7 @@ if firstiteration
         [l l], [endradius endholeradius], 'k')
     splocplot = plot([sploc, sploc], [outerradius(sploc), -outerradius(sploc)], 'ob');
     lmpplot = scatter(lmploc, lmploc*0, 1000*DiscRadius*lmpval/max(lmpval), "filled");
-    forcearrow = quiver(fp+10e-3, 0, -10e-3, 0, 'r');
+    forcearrow = quiver(fp+10e-3, 0, -l/10, 0, 'r');
     forcearrow.LineWidth = 2;
     forcearrow.MaxHeadSize = 1;
     ylim([-DiscRadius*1.1, DiscRadius*1.1])
@@ -218,7 +219,6 @@ if firstiteration
         Tlmp = Tlmp + 0.5*lmpval(i)*(diff(u(t), t))^2 + ...
         0.5*lmpval(i)*(subs((diff(ydef, t))^2+(diff(zdef, t))^2, x, lmploc(i)));
     end
-    Tlmp
 
     fprintf('Integrating Translational KE...\n')
     Tt = expand(int(KEt, x, 0, l) + Tx); % Translational kinetic energy of the shaft
@@ -228,7 +228,6 @@ if firstiteration
         subs((diff(zdef, t) - DiscLoc*diff(diff(zdef,x),t))^2, x, 0));
     
     fprintf('Integrating Rotational KE... ')
-    
     % Parallelized integration of Rotational KE
     KErTerms = children(KEr);
     numKErTerms = length(KErTerms);
@@ -241,9 +240,15 @@ if firstiteration
     fprintf('Adding Total KE''s...\n')
     T = Tt + Tr + Tdisc + Tlmp;
 
-    fprintf('Integrating Bending and Shearing PE...\n')
-    Vbs = expand(int(PEb + PEs, x, 0, l)); % Potential energy due to bending and shearing
-
+    fprintf('Integrating Bending and Shearing PE... ')
+    % Parallelized integration of bending and shearing energy
+    PEbsTerms = children(PEb + PEs);
+    numPEbsTerms = length(PEbsTerms);
+    fprintf("%d terms found.\n", numPEbsTerms)
+    Vbs = sym(0);
+    parfor i = 1:numPEbsTerms
+        Vbs = Vbs + int(PEbsTerms(i), x, 0, l)
+    end
 end
     
 % Total potential energy
@@ -392,33 +397,35 @@ speeds = linspace(0, maxspeed, plotres);
 points = zeros(2*NumEqs, plotres);
 
 % Calculating and storing eigenvalues at different spin speeds...
+
+
 parfor i=1:plotres % for each spin speed
     currentspeed = speeds(i);
     fprintf('Calculating eigenvalues at spin speed %f rad/s\n', speeds(i));
     
-%   System governing equations (and so Rr and Ss) should be independent of t
-%   But imperfect simplification might lead to t being present in Rr and Ss
-%   Arbitrary substitution t=0 is used to deal with this.
-    
-    RrSubbed = vpa(subs(Rr, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Rr
-    SsSubbed = vpa(subs(Ss, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Ss
-    EffMat = -RrSubbed\SsSubbed;                                % Find Rr\Ss i.e. inv(Rr)*Ss
-    points(:,i) = sort(abs(imag(eig(EffMat))))/(2*pi);          % Imaginary parts of eigenvalues divided by 2*pi are natural frequencies
-end
-
-% Drawing modeshapes at different spin speeds...
-for i=1:modespeeds % for each spin speed
-    currentspeed = maxspeed*(i-1)/modespeeds;
-    fprintf('Drawing modeshapes at spin speed %f rad/s\n', speeds(i));
+    %   System governing equations (and so Rr and Ss) should be independent of t
+    %   But imperfect simplification might lead to t being present in Rr and Ss
+    %   Arbitrary substitution t=0 is used to deal with this.
     
     RrSubbed = vpa(subs(Rr, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Rr
     SsSubbed = vpa(subs(Ss, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Ss
     EffMat = -RrSubbed\SsSubbed;                                % Find Rr\Ss i.e. inv(Rr)*Ss
     [EigVec, EigVal] = eig(EffMat);
+    points(:,i) = sort(abs(imag(diag(EigVal))))/(2*pi);          % Imaginary parts of eigenvalues divided by 2*pi are natural frequencies
+end
+
+% Serial loop to allow global access to EigVec, EigVal
+for i = 1:modespeeds
+    currentspeed = (i-1)*maxspeed/modespeeds;
+    RrSubbed = vpa(subs(Rr, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Rr
+    SsSubbed = vpa(subs(Ss, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Ss
+    EffMat = -RrSubbed\SsSubbed;                                % Find Rr\Ss i.e. inv(Rr)*Ss
+    [EigVec, EigVal] = eig(EffMat);
+    fprintf('Drawing modeshapes at spin speed %f rad/s\n', speeds(i));
     modeshape_filename = 'Modeshapes/kb'+string(sprintf('%.1e', kbvals(1)))+...
-        'Fax'+string(sprintf('%.1f', Fax))+'omega'+string(currentspeed)+...
+        'Fax'+string(sprintf('%.1f', Fax))+'omega'+string(round(currentspeed))+...
         '.svg'
-    modeshapes(l,EigVec,EigVal,Qshapes,outerradius,currentspeed,modeshape_filename)
+    mode_shapes(l,EigVec,EigVal,Qshapes,outerradius,currentspeed,maxnodes,max_num_modeshapes,DiscRadius,modeshape_filename)
 end
 
 % Discard alternate points in each column because they repeat (one instance for the y-direction and one for the z-direction)
