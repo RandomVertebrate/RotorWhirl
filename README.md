@@ -3,9 +3,9 @@ Unauthorized use/duplication of repository contents NOT PERMITTED.
 # RotorWhirl
 Whirl prediction in rotors with an aerostatic thrust bearing at one end.
 
-Some of these .m files do whirl prediction. Others fit and plot curves to model aerostatic bearing behavior.
-
 Theory developed and validated by Riju Chatterjee and Ashutosh Patel. The general idea behind (an earlier version of) the whirl prediction method is here: [Conference Paper](https://doi.org/10.1115/GT2022-82632), [Video Presentation](https://youtu.be/lfDOsH-XRDQ)
+
+Some of these .m files do whirl prediction. Others fit and plot curves to model aerostatic bearing behavior.
 
 ## Example
 <p align = "center">
