@@ -26,7 +26,7 @@ phi0 = pi/6 %angular coordinate of first hole (tilt axis is at zero)
 %Read CFD/Experiment data from excel file
 %Excel file has the following columns:
 %  h_microns_  Tilt_seconds_  W_kN_  Moment_Nm_
-DataTable = readtable('FitData_test_PCD75_300um_1e6.xlsx')
+DataTable = readtable('FitData_test_PCD75_300um_recessP.xlsx')
 NumDataPts = height(DataTable)
 data.height = DataTable.h_microns*1e-6; %convert microns to meters
 data.tilt = DataTable.Tilt_seconds*pi/(180*3600); %convert seconds to radians

@@ -193,10 +193,10 @@ if firstiteration
     KEt = 0.5*rhoA(x)*(diff(ydef, t)^2+diff(zdef, t)^2);
     % Bending Potential Energy per Unit Length
     fprintf('Defining Bending PE...\n')
-    PEb = 0.5*EI(x)*(diff(diff(ydef, x)-phiz, x)^2 + diff(-diff(zdef, x)-phiy, x)^2);
+    PEb = 0.5*EI(x)*expand(diff(diff(ydef, x)-phiz, x)^2) + 0.5*EI(x)*expand(diff(-diff(zdef, x)-phiy, x)^2);
     % Shearing Potential Energy per Unit Length
     fprintf('Defining Shearing PE...\n')
-    PEs = 0.5*KAG(x)*(phiy^2+phiz^2);
+    PEs = 0.5*KAG(x)*expand(phiy^2) + 0.5*KAG(x)*expand(phiz^2);
     % Net change (reduction) in rotor span due to deflection
     fprintf('Defining Axial Shortening...\n')
     deltal = int(0.5*(diff(ydef,x)^2 + diff(zdef,x)^2 - phiy^2 - phiz^2), x, 0, fp);
@@ -398,10 +398,9 @@ points = zeros(2*NumEqs, plotres);
 
 % Calculating and storing eigenvalues at different spin speeds...
 
-
 parfor i=1:plotres % for each spin speed
     currentspeed = speeds(i);
-    fprintf('Calculating eigenvalues at spin speed %f rad/s\n', speeds(i));
+    fprintf('Calculating eigenvalues at spin speed %f rad/s ...\n', speeds(i));
     
     %   System governing equations (and so Rr and Ss) should be independent of t
     %   But imperfect simplification might lead to t being present in Rr and Ss
@@ -410,9 +409,23 @@ parfor i=1:plotres % for each spin speed
     RrSubbed = vpa(subs(Rr, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Rr
     SsSubbed = vpa(subs(Ss, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Ss
     EffMat = -RrSubbed\SsSubbed;                                % Find Rr\Ss i.e. inv(Rr)*Ss
-    [EigVec, EigVal] = eig(EffMat);
-    points(:,i) = sort(abs(imag(diag(EigVal))))/(2*pi);          % Imaginary parts of eigenvalues divided by 2*pi are natural frequencies
+    try
+        [EigVec, EigVal] = eig(EffMat);
+        points(:,i) = sort(abs(imag(diag(EigVal))))/(2*pi);     % Imaginary parts of eigenvalues divided by 2*pi are natural frequencies
+    catch
+        points(:,i) = NaN;
+        fprintf('Eigenvalue calculation failed at spin speed %f rad/s\n', speeds(i));
+    end    
 end
+
+% Fill in any NaN data in points (where eig failed) using neighboring datapoints
+for i = 1:plotres-1                             % For each nonfinal column in points
+    nanlist = isnan(points(:,i));               % Find NaN entries in column
+    points(nanlist,i) = points(nanlist,i+1);    % Fill in NaN values from next column
+end
+% Fill in NaN data in last column from previous column
+nanlist = isnan(points(:,end));
+points(nanlist,end) = points(nanlist,end-1);
 
 % Serial loop to allow global access to EigVec, EigVal
 for i = 1:modespeeds
@@ -420,12 +433,16 @@ for i = 1:modespeeds
     RrSubbed = vpa(subs(Rr, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Rr
     SsSubbed = vpa(subs(Ss, [omegas, t], [currentspeed, 0]));   % Substitute spin speed and t into Ss
     EffMat = -RrSubbed\SsSubbed;                                % Find Rr\Ss i.e. inv(Rr)*Ss
-    [EigVec, EigVal] = eig(EffMat);
-    fprintf('Drawing modeshapes at spin speed %f rad/s\n', speeds(i));
-    modeshape_filename = 'Modeshapes/kb'+string(sprintf('%.1e', kbvals(1)))+...
-        'Fax'+string(sprintf('%.1f', Fax))+'omega'+string(round(currentspeed))+...
-        '.svg'
-    mode_shapes(l,EigVec,EigVal,Qshapes,outerradius,currentspeed,maxnodes,max_num_modeshapes,DiscRadius,modeshape_filename)
+    try
+        [EigVec, EigVal] = eig(EffMat);
+        fprintf('Drawing modeshapes at spin speed %f rad/s\n', speeds(i));
+        modeshape_filename = 'Modeshapes/kb'+string(sprintf('%.1e', kbvals(1)))+...
+            'Fax'+string(sprintf('%.1f', Fax))+'omega'+string(round(currentspeed))+...
+            '.svg'
+        mode_shapes(l,EigVec,EigVal,Qshapes,outerradius,currentspeed,Fax,h0,maxnodes,max_num_modeshapes,DiscRadius,modeshape_filename)
+    catch
+        fprintf('Drawing modeshapes failed at spin speed %f rad/s\n', speeds(i));
+    end
 end
 
 % Discard alternate points in each column because they repeat (one instance for the y-direction and one for the z-direction)
@@ -513,8 +530,8 @@ grid minor
 
 ylim([0 maxspeed/(2*pi)])
 xlim([0 maxspeed])
-title('Bearing Stiffnesses '+string(sprintf('%.1e', kbvals(1)))+...
-    ' N/m, Load = '+string(sprintf('%.1f', Fax))+' N')
+title('Air gap = '+string(sprintf('%d', round(h0*1e6)))+...
+    ' \mu{m}, Load = '+string(sprintf('%.1f', Fax))+' N')
 xlabel('Spin Speed (rad/s)')
 ylabel('Natural Frequency (Hz)')
 

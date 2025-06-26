@@ -1,4 +1,4 @@
-function mode_shapes(l, EigVec_matrix, EigVal_matrix, Qshapes, outerradius, currentspeed, maxnodes, maxmodes, DiscRadius, filename)
+function mode_shapes(l, EigVec_matrix, EigVal_matrix, Qshapes, outerradius, currentspeed, axload, gap, maxnodes, maxmodes, DiscRadius, filename)
 
 syms x
 n = double(maxmodes);                         % no of modes shapes to plot
@@ -132,6 +132,10 @@ for i = 1:n
             
         scatter(zero_x_vals, zeros(size(zero_x_vals)), 'ro', 'LineWidth', 1); % Zero-crossing points
         title(string(round(EigValue_vec_sort(Vec_size+i)/(2*pi)))+" Hz")
+%         xtickArr = xticks
+%         zero_x_vals
+%         xticks(sort([xtickArr,zero_x_vals]))
+%         xtickangle(45)
         yticks(0)
         hold off
         grid on
@@ -142,7 +146,7 @@ for i = 1:n
     end
 end
 
-title(combined_plot, "Modeshapes at "+string(round(currentspeed,1))+" rad/s")
+title(combined_plot, ["Modeshapes at";"Spin speed "+string(round(currentspeed,1))+" rad/s, axial load "+string(round(axload,1))+" N, clearance "+string(round(gap*1e6))+" \mu{m}"])
 saveas(outfig, filename)
 close(outfig)
 
