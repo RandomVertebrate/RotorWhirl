@@ -19,7 +19,8 @@ material_properties = default_material_properties()
 simulation_settings = default_simulation_settings()
 ```
 Make any changes required
-e.g. change step sizes
+
+e.g. change step sizes in shaft profile
 ```
 rotor_data.shaft_step_values = [10 50 -50 -10]*1e-3
 ```
