@@ -1,4 +1,4 @@
-The author of this MATLAB code hereby gives permission for the code to be used in its unmodified form for any personal, research, or commercial use.
+The author of this MATLAB code hereby grants permission for the code to be used in its unmodified form by any persons or parties for any personal, research, or commercial use.
 
 The author also gives permission for the unmodified code to be distributed, subject to the inclusion of this license in every copy.
 
