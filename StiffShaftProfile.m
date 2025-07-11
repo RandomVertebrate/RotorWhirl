@@ -247,7 +247,7 @@ grid minor
 title("Effective Shaft Profile")
 xlabel("x")
 ylabel("Radius")
-legend(["True Profile"; "Upramp Start"; "Downramp End"; "Intersections"; "Ramps"; "Effective Profile"])
+legend(["True Profile"; "Upramp Start"; "Downramp End"; "Intersections"; "Ramps"; "Effective Profile"],'Location','southoutside')
 shg
 
 % Building symbolic output
