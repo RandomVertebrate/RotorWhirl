@@ -79,8 +79,6 @@ BearingMoment = @(h, theta) symsum(C1*rholes*sin(phi0+k*phigap)/(1+C2*(h+rholes*
 Fax = subs(BearingForce(h,0), h, h0);
 NetFlatForce = @(h) eval(Fax - BearingForce(h,0));      % Single-argument load function to solve for operating clearance
 
-%h0 = lsqnonlin(NetFlatForce, 1e-5, mingap, maxgap);     % Operating clearance for chosen load value
-
 TotalStiffness = subs(diff(NetFlatForce(h), h), h, h0); % Total translational film stiffness at operating clearance
 
 fprintf('\nCurrent load = %f N\nCurrent operating clearance = %f m\nCurrent total film stiffness = %f N/m\nForce residual = %f N\n\n', ...
@@ -97,11 +95,11 @@ if firstiteration
 
     % CALCULATING ROTOR PROPERTIES
 
-    rhoA = @(x) expand(eval(7850*pi*(outerradius(x)^2-innerradius(x)^2)));           % Linear Mass Density
+    rhoA = @(x) expand(eval(materialDensity*pi*(outerradius(x)^2-innerradius(x)^2)));           % Linear Mass Density
 
-    EI = @(x) expand(eval(2e11*pi*(outerradius2(x)^4-innerradius(x)^4)/4));           % Flexural Rigidity
+    EI = @(x) expand(eval(youngsModulus*pi*(outerradius2(x)^4-innerradius(x)^4)/4));           % Flexural Rigidity
 
-    KAG = @(x) expand(eval(0.9*pi*(outerradius(x)^2-innerradius(x)^2)*7.6923e10));   % Effective Shear Rigidity
+    KAG = @(x) expand(eval(0.9*pi*(outerradius(x)^2-innerradius(x)^2)*shearModulus));   % Effective Shear Rigidity
 
     Jp = @(x) expand(eval((1/4)*rhoA(x)*(outerradius(x)^2+innerradius(x)^2)));       % Axial Mass Moment of Inertia per Unit Length
 
