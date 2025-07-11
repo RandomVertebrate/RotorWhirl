@@ -1,4 +1,4 @@
-Unauthorized use/duplication of repository contents NOT PERMITTED.
+READ LICENSE.
 
 # RotorWhirl
 Whirl prediction in rotors with an aerostatic thrust bearing at one end.
