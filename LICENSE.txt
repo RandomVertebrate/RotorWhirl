@@ -3,7 +3,7 @@ The author of this MATLAB code hereby grants permission for the code to be used 
 The author also gives permission for the unmodified code to be distributed, subject to the inclusion of this license in every copy.
 
 By default, the author explicitly disallows any modification of this code, including but not limited to modification of comments and/or this license.
-Permission to modify the code might be obtained only by personally contacting the author.
+Permission to modify the code may be granted to individuals at the author's discretion and upon personal request only.
 
 To the maximum extent allowable by law, the author disallows the creation of derivative works based on this code.
 If any applicable laws guarantee to any extent any entity's right to create derivative work from this code, the author requests in good faith that this code be referenced in publicly available documentation of any such derivative work created.
