@@ -7,8 +7,7 @@ Theory developed and validated by Riju Chatterjee and Ashutosh Patel. The genera
 
 Some of these .m files do whirl prediction. Others fit and plot curves to model aerostatic bearing behavior.
 
-## Example
-### Homogenous Stepped Shaft
+## Homogenous Stepped Shaft Example
 
 <p align="center">
   <img src="figs/demo_rotor.svg" height="400" alt="Rotor geometry">
