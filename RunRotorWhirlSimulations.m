@@ -43,8 +43,8 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
     
     % Axial hole details for hollow shaft
     holerad = rotor_data.axial_hole_radius;
-    holestart = rotor_data.axial_hole_start;  % x-coordinate of start of hole
-    holestop = rotor_data.axial_hole_end;   % x-coordinate of end of hole
+    holestart = rotor_data.axial_hole_ends(1);  % x-coordinate of start of hole
+    holestop = rotor_data.axial_hole_ends(2);   % x-coordinate of end of hole
     % (holestart == holestop) implies no hole
     
     % DEFINING SHAFT GEOMETRY
