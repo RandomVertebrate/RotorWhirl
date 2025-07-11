@@ -5,5 +5,4 @@ The author also gives permission for the unmodified code to be distributed, subj
 By default, the author explicitly disallows any modification of this code, including but not limited to modification of comments and/or this license.
 Permission to modify the code might be obtained only by personally contacting the author.
 
-To the extent that any applicable laws guarantee any entity's right to create derivative work from this code, the author requests in good faith that
-the original be referenced in publicly available documentation of the derivative work.
+To the extent that any applicable laws guarantee any entity's right to create derivative work from this code, the author requests in good faith that the original be referenced in publicly available documentation of the derivative work.
