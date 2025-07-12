@@ -10,7 +10,7 @@ Some of these .m files do whirl prediction. Others fit and plot curves to model 
 ## Examples
 ### Whirl prediction in homogenous partially hollow stepped shaft
 <p align="center">
-  <img src="figs/demo_rotor.svg" height="400" alt="Rotor geometry">
+  <img src="figs/demo_rotor.svg" width="300" alt="Rotor geometry">
 </p>
 
 From the code directory, run:
@@ -25,7 +25,7 @@ plot_crits
 ```
 Results:
 <p align="center">
-  <img src="figs/demo_rotor_profile.svg" height="400" alt="Effective profile for bending stiffness">
+  <img src="figs/demo_rotor_profile.svg" width="300" alt="Effective profile for bending stiffness">
 </p><p align="center">
   <img src="figs/demoCampbellFrame1.png" width="300" alt="Campbell diagram 1"> <img src="figs/demoCampbellFrame6.png" width="300" alt="Campbell diagram 2">
 </p><p align="center">
