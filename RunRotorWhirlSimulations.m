@@ -71,7 +71,7 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
         % get radius functions from rotor_data
         outerradius = rotor_data.outer_radius;
         outerradius2 = rotor_data.stiff_radius;
-        innerradius = rotor_data.inner_radius;
+        innerradius = @(x) rotor_data.inner_radius(x).*(heaviside(holestop-x)-heaviside(holestart-x));
     end
     
     participationslope = 1;
