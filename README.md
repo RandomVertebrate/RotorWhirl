@@ -155,6 +155,6 @@ Expected fields in the simulation_settings struct
 
 ```max_speed``` Horizontal limit in radians of Campbell diagram
 
-```air_gap``` Array of air gap values to run analysis at
+```air_gap``` Array of air gap values in meters to run analysis at
 
 [^1]: https://ecommons.udayton.edu/graduate_theses/767 
