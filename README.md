@@ -68,83 +68,93 @@ RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,simulation_
 % Plot critical speed map
 plot_crits
 ```
+Results:
+<p align="center">
+  <img src="figs/demo_rotor2.svg" width="300" alt="Rotor geometry">
+</p><p align="center">
+  <img src="figs/demoCampbell2Frame1.png" width="300" alt="Campbell diagram 1"> <img src="figs/demoCampbell2Frame6.png" width="300" alt="Campbell diagram 2">
+</p><p align="center">
+  <img src="figs/demo_modes5.svg" width="300" alt="Mode shapes 1"> <img src="figs/demo_modes6.svg" width="300" alt="Mode shapes 2"> <img src="figs/demo_modes7.svg" width="300" alt="Mode shapes 3"> <img src="figs/demo_modes8.svg" width="300" alt="Mode shapes 4">
+</p><p align="center">
+  <img src="figs/demo_rotor2_critmap.svg" width="300" alt="Critical speed map">
+</p>
 
 ## Rotor Properties
 Expected fields in the rotor_data struct:
 
-```length```
+```length``` Total length of shaft in meters
 
-```shaft_initial_radius```
+```shaft_initial_radius``` Radius in meters of shaft at left end
 
-```lateral_support_locations```
+```lateral_support_locations``` Array of locations (distances in meters along shaft from left end) of lateral supports
 
-```lateral_support_stiffnesses```
+```lateral_support_stiffnesses``` Stiffnesses of lateral supports
 
-```axial_load_location```
+```axial_load_location``` Location of application of axial load
 
-```shaft_step_locations```
+```shaft_step_locations``` Locations of changes in radius of stepped shaft; set empty for smooth profile
 
-```shaft_step_values```
+```shaft_step_values``` Changes in radius of shaft going left to right; positive values for increase in radius and negative values for decrease
 
-```axial_hole_radius```
+```axial_hole_radius``` Radius of axial hole in stepped shaft
 
-```axial_hole_ends```
+```axial_hole_ends``` 2-element array containing start and end locations of axial hole
 
-```lumped_mass_location```
+```lumped_mass_location``` Array of locations of lumped masses on shaft
 
-```lumped_mass_value```
+```lumped_mass_value``` Array of lumped mass values in Kg
 
-```outer_radius```
+```outer_radius``` For custom shaft profiles: handle to outer radius profile as vectorized function of axial coordinate
 
-```inner_radius```
+```inner_radius``` For custom shaft profiles: handle to inner (axial hole) radius profile as vectorized function of axial coordinate
 
-```stiff_radius```
+```stiff_radius``` For custom shaft profiles: handle to effective profile for stiffness calculation as vectorized function of axial coordinate
 
 ## Bearing Properties
 Expected fields in the bearing_data struct
 
-```C1```
+```C1``` First thrust bearing constant fit to data
 
-```C2```
+```C2``` Second thrust bearing constant fit to data
 
-```C3```
+```C3``` Third thrust bearing constant fit to data
 
-```disc_radius```
+```disc_radius``` Radius of thrust bearing disc in meters
 
-```disc_thickness```
+```disc_thickness``` Thickness os thrust bearing disc in meters
 
-```num_orifices```
+```num_orifices``` Number of equally spaced orifices on pitch circle
 
-```orifice_radial_location```
+```orifice_radial_location``` Pitch circle radius of thrust bearing in meters
 
-```bearing_angle_offset```
+```bearing_angle_offset``` Angular offset in radians about rotor axis of stationary disc of thrust bearing
 
 ## Material Properties
 Expected fields in the material_properties struct
 
-```density```
+```density``` Material density in Kg/m^3
 
-```youngs_modulus```
+```youngs_modulus``` Modulus of elasticity in Pa
 
-```shear_modulus```
+```shear_modulus``` Shear modulus in Pa
 
 ## Simulation Settings
 Expected fields in the simulation_settings struct
 
-```num_processor_cores```
+```num_processor_cores``` Number of processor cores to use
 
-```num_assumed_modes```
+```num_assumed_modes``` Number of assumed-mode shapes to use
 
-```campbell_resolution```
+```campbell_resolution``` Horizontal resolution of Campbell diagram
 
-```modeshape_plot_rate```
+```modeshape_plot_rate``` Number of modeshapes to plot per Campbell diagram
 
-```max_nodal_locations```
+```max_nodal_locations``` Maximum number of nodal locaions in plotted modeshapes
 
-```max_num_modeshapes```
+```max_num_modeshapes``` Maximum number of modeshapes per plot
 
-```max_speed```
+```max_speed``` Horizontal limit in radians of Campbell diagram
 
-```air_gap```
+```air_gap``` Array of air gap values to run analysis at
 
 [^1]: https://ecommons.udayton.edu/graduate_theses/767 
