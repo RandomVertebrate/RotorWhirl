@@ -7,9 +7,9 @@ Theory developed and validated by Riju Chatterjee and Ashutosh Patel. The genera
 
 Some of these .m files do whirl prediction. Others fit and plot curves to model aerostatic bearing behavior.
 
-## Syntax
+## Usage
 ```
-RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,simulation_settings)
+RunRotorWhirlSimulations(rotor_data, bearing_data, material_properties, simulation_settings)
 plot_crits
 ```
 
@@ -24,7 +24,7 @@ material_properties = default_material_properties()
 simulation_settings = default_simulation_settings()
 
 % Pass structs to RunRotorWhirlSimulations()
-RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,simulation_settings)
+RunRotorWhirlSimulations(rotor_data, bearing_data, material_properties, simulation_settings)
 
 % Plot critical speed map from output data stored in critspeeds.txt
 plot_crits
@@ -69,7 +69,7 @@ rotor_data.lateral_support_stiffnesses = [5e6 5e6]
 simulation_settings.max_speed = 2500
 
 % Run analysis
-RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,simulation_settings)
+RunRotorWhirlSimulations(rotor_data, bearing_data, material_properties, simulation_settings)
 
 % Plot critical speed map
 plot_crits
