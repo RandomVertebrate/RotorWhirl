@@ -7,22 +7,7 @@ delete(gcp('nocreate'));
 parpool(processorcores);
 
 if firstiteration
-    % Rotor geometry
-
-    syms xcoord real
-
-    ORexp = TrueShaftProfile(xcoord, baseradius, steploc, stepval);
-    OR2exp = StiffShaftProfile(xcoord, baseradius, steploc, stepval, l, participationslope);
-
-    % Radius function used for linear mass density, rotational inertia, and shear stiffness
-    outerradius = @(x) subs(ORexp, xcoord, x);
-
-    % Radius function used for bending stiffness
-    outerradius2 = @(x) subs(OR2exp, xcoord, x);
-
-    % Hole radius function (ignore for solid shaft)
-    innerradius = @(x) holerad*heaviside(x-holestart) - holerad*heaviside(x-holestop);
-
+    
     % Drawing rotor geometry...
     xvals = linspace(0, l, 1000);
     holexvals = linspace(0.999*holestart, 1.001*holestop, 1000);

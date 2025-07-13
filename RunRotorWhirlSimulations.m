@@ -27,6 +27,7 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
 
     lmpval = rotor_data.lumped_mass_value;                   % lumped-mass values
     num_lmp = length(lmploc);
+
     
     % Material Properties
     materialDensity = material_properties.density;
@@ -48,9 +49,30 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
     % (holestart == holestop) implies no hole
     
     % DEFINING SHAFT GEOMETRY
-    baseradius = rotor_data.shaft_initial_radius;                   % Radius of shaft at junction with disc
-    steploc = rotor_data.shaft_step_locations;                 % Axial locations (distances from shaft-disc junction) of steps in shaft profile
-    stepval = rotor_data.shaft_step_values;                   % Values of radius increments at step locations
+    if length(rotor_data.shaft_step_locations)>0
+        baseradius = rotor_data.shaft_initial_radius;                   % Radius of shaft at junction with disc
+        steploc = rotor_data.shaft_step_locations;                 % Axial locations (distances from shaft-disc junction) of steps in shaft profile
+        stepval = rotor_data.shaft_step_values;                   % Values of radius increments at step locations
+        % Rotor geometry
+        syms xcoord real    
+        ORexp = TrueShaftProfile(xcoord, baseradius, steploc, stepval);
+        OR2exp = StiffShaftProfile(xcoord, baseradius, steploc, stepval, l, participationslope);
+    
+        % Radius function used for linear mass density, rotational inertia, and shear stiffness
+        outerradius = @(x) subs(ORexp, xcoord, x);
+    
+        % Radius function used for bending stiffness
+        outerradius2 = @(x) subs(OR2exp, xcoord, x);
+    
+        % Hole radius function (ignore for solid shaft)
+        innerradius = @(x) holerad*heaviside(x-holestart) - holerad*heaviside(x-holestop);
+
+    else
+        % get radius functions from rotor_data
+        outerradius = rotor_data.outer_radius;
+        outerradius2 = rotor_data.stiff_radius;
+        innerradius = rotor_data.inner_radius;
+    end
     
     participationslope = 1;
     
@@ -126,8 +148,9 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
     fprintf(outputfile, '\n\nRotor Length = %f m\n', l);
     fprintf(outputfile, 'Disc radius = %f m\n', DiscRadius);
     fprintf(outputfile, 'Disc thickness = %f m\n', DiscThickness);
-    fprintf(outputfile, 'True shaft profile = %s\n', string(ORexp));
-    fprintf(outputfile, 'Effective rigidity profile = %s\n', string(ORexp));
+    fprintf(outputfile, 'True shaft profile = %s\n', string(outerradius(x)));
+    fprintf(outputfile, 'Effective rigidity profile = %s\n', string(outerradius2(x)));
+    fprintf(outputfile, 'hole profile = %s from %s to %s\n', string(innerradius(x)), string(holestart), string(holestop));
     fprintf(outputfile, 'Support locations from left side (gas bearing side)');
     for i=1:num_bearings
         fprintf(outputfile, ', %f', sploc(i))
