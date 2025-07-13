@@ -7,6 +7,12 @@ Theory developed and validated by Riju Chatterjee and Ashutosh Patel. The genera
 
 Some of these .m files do whirl prediction. Others fit and plot curves to model aerostatic bearing behavior.
 
+## Syntax
+```
+RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,simulation_settings)
+plot_crits
+```
+
 ## Examples
 ### 1. Default example: stepped partially hollow shaft
 
