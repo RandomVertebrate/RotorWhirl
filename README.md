@@ -94,11 +94,11 @@ Expected fields in the rotor_data struct:
 
 ```lateral_support_locations``` Array of locations (distances in meters along shaft from left end) of lateral supports
 
-```lateral_support_stiffnesses``` Stiffnesses of lateral supports
+```lateral_support_stiffnesses``` Stiffnesses of lateral supports in N/m
 
 ```axial_load_location``` Location of application of axial load
 
-```shaft_step_locations``` Locations of changes in radius of stepped shaft; set empty for smooth profile
+```shaft_step_locations``` Locations of changes in radius of stepped shaft; set empty for custom profile
 
 ```shaft_step_values``` Changes in radius of shaft going left to right; positive values for increase in radius and negative values for decrease
 
@@ -127,7 +127,7 @@ Expected fields in the bearing_data struct
 
 ```disc_radius``` Radius of thrust bearing disc in meters
 
-```disc_thickness``` Thickness os thrust bearing disc in meters
+```disc_thickness``` Thickness of thrust bearing disc in meters
 
 ```num_orifices``` Number of equally spaced orifices on pitch circle
 
