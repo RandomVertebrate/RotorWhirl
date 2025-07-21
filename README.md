@@ -24,7 +24,7 @@ material_properties = default_material_properties()
 simulation_settings = default_simulation_settings()
 
 % Pass structs to RunRotorWhirlSimulations()
-RunRotorWhirlSimulations(rotor_data, bearing_data, material_properties, simulation_settings)
+RunRotorWhirlAnalysis(rotor_data, bearing_data, material_properties, simulation_settings)
 
 % Plot critical speed map from output data stored in critspeeds.txt
 plot_crits
@@ -61,6 +61,7 @@ rotor_data.stiff_radius = @(x) -0.05*x.^5 + 0.3*x.^4 - 0.25*x.^3 + 0.05*x + 0.02
 rotor_data.inner_radius = @(x) -0.1*x.^5 + 0.2*x.^4 + 0.05*x.^3 - 0.1*x.^2 + 0.015       % Inner (axial hole) profile of shaft
 
 % Update rotor properties
+rotor_data.thrust_bearing_location = 0
 rotor_data.axial_hole_ends = [0 1]
 rotor_data.lateral_support_locations = [0.2 0.8]
 rotor_data.lateral_support_stiffnesses = [5e6 5e6]
@@ -69,7 +70,7 @@ rotor_data.lateral_support_stiffnesses = [5e6 5e6]
 simulation_settings.max_speed = 2500
 
 % Run analysis
-RunRotorWhirlSimulations(rotor_data, bearing_data, material_properties, simulation_settings)
+RunRotorWhirlAnalysis(rotor_data, bearing_data, material_properties, simulation_settings)
 
 % Plot critical speed map
 plot_crits
