@@ -22,7 +22,7 @@ if firstiteration
     stiffprofileplot = plot(xvals, outerradius2(xvals), '--k');
     plot(xvals, -outerradius(xvals), 'k')
     plot(xvals, -outerradius2(xvals), '--k')
-    discplot = fill([-DiscThickness, 0, 0, -DiscThickness], ...
+    discplot = fill([discloc-DiscThickness, discloc, discloc, discloc-DiscThickness], ...
         [DiscRadius, DiscRadius, -DiscRadius, -DiscRadius], 'k');
     plot(holexvals, innerradius(holexvals), 'k')
     plot(holexvals, -innerradius(holexvals), 'k')
@@ -136,11 +136,11 @@ if firstiteration
     syms Qshapes
 
     parfor i = 1:2
-        Qshapes(i)=x^(i-1);
+        Qshapes(i)=expand((x-discloc)^(i-1));
     end
     
     parfor i = 3:modes
-        Qshapes(i)=expand((x/l)^(i-1));
+        Qshapes(i)=expand(((x-discloc)/l)^(i-1));
     end
 
     % DEFINING GENERALIZED COORDINATES
@@ -182,7 +182,7 @@ if firstiteration
     PEs = 0.5*KAG(x)*expand(phiy^2) + 0.5*KAG(x)*expand(phiz^2);
     % Net change (reduction) in rotor span due to deflection
     fprintf('Defining Axial Shortening...\n')
-    deltal = int(0.5*(diff(ydef,x)^2 + diff(zdef,x)^2 - phiy^2 - phiz^2), x, 0, fp);
+    deltal = int(0.5*(diff(ydef,x)^2 + diff(zdef,x)^2 - phiy^2 - phiz^2), x, discloc, fp);
 
     syms u(t) % A new generalized coordinate that gives the horizontal location of the bearing side of the rotor, zero when the gap equals h0 and positive when the gap is larger.
 end
@@ -263,27 +263,32 @@ syms Ai Aidot uu uudot
 % 3) Substitute functions back in in place of variables
 
 parfor i=1:4*modes % For each generalized coordinate,
-    fprintf('Writing equation %d of %d...\n', i, NumEqs);
-    % Currently, the generalized coordinate A{i}(t) is an arbitrary symbolic function of time, as is its time-derivative.
-    % FIRST substitute a symbolic variable in place of the time derivative of the generalized coordinate into the Lagrangian, THEN substitute another sym variable in place of the coordinate itself.
-    Lconst = subs(subs(L, diff(A{i}(t),t), Aidot), A{i}(t), Ai);
-    % Differentiate the variable-substituted Lagrangian with respect to the variable representing the generalized coordinate, then substitute the original arbitrary time-functions back in place of the placeholder symvars
-    delLdelA = subs(diff(Lconst, Ai), {Ai, Aidot}, {A{i}(t), diff(A{i}(t),t)});
-    % Differentiate the variable-substituted Lagrangian with respect to the variable representing the time-derivative of the generalized coordinate, then substitute the original arbitrary time-functions back in place of the placeholder symvars
-    delLdelAdot = subs(diff(Lconst, Aidot), {Ai, Aidot}, {A{i}(t), diff(A{i}(t),t)});
-    
-    % The second and (modes+2)th generalized coordinates give the slope of the shaft at x=0.
-    % The (2*modes+1)the and (3*modes+1)th gen. coords. give the shear angle of the shaft at x=0.
-    % All of these contribute to the tilt of the gas bearing, so the bearing moment acts along (against) them.
-    % For the equations corresponding to these generalized coordinates, the RHS of the Euler-Lagrange equation is the generalized force, i.e. the bearing moment.
-    if ((i==2) | (i==modes+2)) | ((i==2*modes+1) | (i==3*modes+1))
-        % Actually negative, but the negative sign is built into bmApprox.
-        RHS = bmApprox(h0+u(t), A{i}(t));
-    else
-        RHS = 0;
+
+    % Only the linear terms in displacement and the constant terms in shear
+    % affect thrust bearing tilt.
+    tilt_affected = ((i==2) | (i==modes+2)) | ((i==2*modes+1) | (i==3*modes+1));
+
+    % Write all equations on first iteration and only rewrite equations
+    % involving tilt on subsequent iterations
+    if firstiteration | tilt_affected
+        fprintf('Writing equation %d of %d...\n', i, NumEqs);
+        % Currently, the generalized coordinate A{i}(t) is an arbitrary symbolic function of time, as is its time-derivative.
+        % FIRST substitute a symbolic variable in place of the time derivative of the generalized coordinate into the Lagrangian, THEN substitute another sym variable in place of the coordinate itself.
+        Lconst = subs(subs(L, diff(A{i}(t),t), Aidot), A{i}(t), Ai);
+        % Differentiate the variable-substituted Lagrangian with respect to the variable representing the generalized coordinate, then substitute the original arbitrary time-functions back in place of the placeholder symvars
+        delLdelA = subs(diff(Lconst, Ai), {Ai, Aidot}, {A{i}(t), diff(A{i}(t),t)});
+        % Differentiate the variable-substituted Lagrangian with respect to the variable representing the time-derivative of the generalized coordinate, then substitute the original arbitrary time-functions back in place of the placeholder symvars
+        delLdelAdot = subs(diff(Lconst, Aidot), {Ai, Aidot}, {A{i}(t), diff(A{i}(t),t)});
+        
+        if (tilt_affected)
+            % Actually negative, but the negative sign is built into bmApprox.
+            RHS = bmApprox(h0+u(t), A{i}(t));
+        else
+            RHS = 0;
+        end
+        
+        eqns{i} = (diff(delLdelAdot, t) - delLdelA == RHS);
     end
-    
-    eqns{i} = (diff(delLdelAdot, t) - delLdelA == RHS);
 end
 
 % Last equation, same process as above but now with respect to u(t). The RHS is the generalized force along u(t), i.e. the bearing force.
@@ -296,23 +301,34 @@ eqns{4*modes+1} = (diff(delLdeludot, t) - delLdelu == RHS);
 
 % NOW SUBSITUTING SYMBOLIC VARIABLES IN PLACE OF ARBITRARY TIME FUNCTIONS INTO THE SYSTEM OF EQUATIONS SO THAT MATRICES CAN BE FORMED
 
-sys = {}; %sys will contain the EoM with variable placeholers for arbitrary time functions and their derivatives
+% sys = {}
 
 syms Aa [1 modes*4]
 syms Adot [1 modes*4]
 syms Addot [1 modes*4]
 
 parfor i=1:4*modes
-    fprintf('Substituting variables into equation %d of %d...\n', i, NumEqs);
-    tempeq = eqns{i};
-    for j=1:modes*4 % For each equation, i.e., each generalized coordinate
-        % Substitute in variables for the second and first time derivatives of
-        % the generalized coordinate and the generalized coordinate, in that
-        % order, into the corresponding Euler-Lagrange equation
-        tempeq = subs(subs(subs(tempeq, diff(A{j}(t), 't', 2), Addot(j)),...
-            diff(A{j}(t), t), Adot(j)), A{j}(t), Aa(j));
+
+    % Only the linear terms in displacement and the constant terms in shear
+    % affect thrust bearing tilt.
+    tilt_affected = ((i==2) | (i==modes+2)) | ((i==2*modes+1) | (i==3*modes+1));
+
+    % Prepare equations on first iteration and only redo equations
+    % involving tilt on subsequent iterations
+    if firstiteration | tilt_affected
+
+        fprintf('Substituting variables into equation %d of %d...\n', i, NumEqs);
+        tempeq = eqns{i};
+        for j=1:modes*4 % For each equation, i.e., each generalized coordinate
+            % Substitute in variables for the second and first time derivatives of
+            % the generalized coordinate and the generalized coordinate, in that
+            % order, into the corresponding Euler-Lagrange equation
+            tempeq = subs(subs(subs(tempeq, diff(A{j}(t), 't', 2), Addot(j)),...
+                diff(A{j}(t), t), Adot(j)), A{j}(t), Aa(j));
+        end
+        sys{i} = tempeq;
+
     end
-    sys{i} = tempeq;
 end
 
 syms Uu Udot Uddot
@@ -336,6 +352,7 @@ M = sym(zeros(NumEqs^2, 1));
 G = sym(zeros(NumEqs^2, 1));
 K = sym(zeros(NumEqs^2, 1));
 syms eq2expr [1 NumEqs]
+
 parfor i = 1:NumEqs
     eq2expr(i) = lhs(sys{i}) - rhs(sys{i});
 end
@@ -422,7 +439,7 @@ for i = 1:modespeeds
         modeshape_filename = 'Modeshapes/kb'+string(sprintf('%.1e', kbvals(1)))+...
             'Fax'+string(sprintf('%.1f', Fax))+'omega'+string(round(currentspeed))+...
             '.svg'
-        mode_shapes(l,EigVec,EigVal,Qshapes,outerradius,currentspeed,Fax,h0,maxnodes,max_num_modeshapes,DiscRadius,modeshape_filename)
+        mode_shapes(l,EigVec,EigVal,Qshapes,outerradius,currentspeed,Fax,h0,maxnodes,max_num_modeshapes,DiscRadius,discloc,modeshape_filename)
     catch
         fprintf('Drawing modeshapes failed at spin speed %f rad/s\n', speeds(i));
     end

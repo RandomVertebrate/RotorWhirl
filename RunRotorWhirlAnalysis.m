@@ -1,4 +1,4 @@
-function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,simulation_settings)
+function RunRotorWhirlAnalysis(rotor_data,bearing_data,material_properties,simulation_settings)
 
     outputfile = fopen('output.txt', 'w');
     critfile = fopen('critspeeds.txt', 'w');
@@ -28,6 +28,9 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
     lmpval = rotor_data.lumped_mass_value;                   % lumped-mass values
     num_lmp = length(lmploc);
 
+    discloc = rotor_data.thrust_bearing_location;
+
+    participationslope = 1;
     
     % Material Properties
     materialDensity = material_properties.density;
@@ -47,9 +50,6 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
     holestart = rotor_data.axial_hole_ends(1);  % x-coordinate of start of hole
     holestop = rotor_data.axial_hole_ends(2);   % x-coordinate of end of hole
     % (holestart == holestop) implies no hole
-
-    % Stress cone slope
-    participationslope = 1;
     
     % DEFINING SHAFT GEOMETRY
     if length(rotor_data.shaft_step_locations)>0
@@ -76,6 +76,8 @@ function RunRotorWhirlSimulations(rotor_data,bearing_data,material_properties,si
         outerradius2 = rotor_data.stiff_radius;
         innerradius = @(x) rotor_data.inner_radius(x).*(heaviside(holestop-x)-heaviside(holestart-x));
     end
+    
+    participationslope = 1;
     
     % Gas bearing parameters
     C1 = bearing_data.C1;        % Curve-fitted bearing constant

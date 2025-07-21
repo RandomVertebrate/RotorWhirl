@@ -1,4 +1,4 @@
-function mode_shapes(l, EigVec_matrix, EigVal_matrix, Qshapes, outerradius, currentspeed, axload, gap, maxnodes, maxmodes, DiscRadius, filename)
+function mode_shapes(l, EigVec_matrix, EigVal_matrix, Qshapes, outerradius, currentspeed, axload, gap, maxnodes, maxmodes, DiscRadius, DiscLocation, filename)
 
 syms x
 n = double(maxmodes);                         % no of modes shapes to plot
@@ -55,7 +55,7 @@ scgap = 10;
 x_vals = linspace(0, l, npts);
 
 shaftprofile = double(outerradius(x_vals));
-shaftprofile(1) = DiscRadius;
+shaftprofile(round(npts*DiscLocation/l)) = DiscRadius;
 shaftdia = max(shaftprofile);
 
 if maxmodes>8
