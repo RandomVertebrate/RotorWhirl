@@ -36,7 +36,7 @@ Results:
 <p align="center">
   <img src="figs/demo_rotor_profile.svg" width="300" alt="Effective profile for bending stiffness">
 </p><p align="center">
-  <img src="figs/demoCampbellFrame1.png" width="300" alt="Campbell diagram 1"> <img src="figs/demoCampbellFrame6.png" width="300" alt="Campbell diagram 2">
+  <img src="figs/demoCampbellFrame1.png" width="300" alt="Campbell diagram 1"> <img src="figs/demoCampbellFrame8.png" width="300" alt="Campbell diagram 2"> <img src="figs/demoCampbellFrame11.png" width="300" alt="Campbell diagram 2">
 </p><p align="center">
   <img src="figs/demo_modes1.svg" width="300" alt="Mode shapes 1"> <img src="figs/demo_modes2.svg" width="300" alt="Mode shapes 2"> <img src="figs/demo_modes3.svg" width="300" alt="Mode shapes 3"> <img src="figs/demo_modes4.svg" width="300" alt="Mode shapes 4">
 </p><p align="center">
@@ -78,7 +78,7 @@ Results:
 <p align="center">
   <img src="figs/demo_rotor2.svg" width="300" alt="Rotor geometry">
 </p><p align="center">
-  <img src="figs/demoCampbell2Frame1.png" width="300" alt="Campbell diagram 1"> <img src="figs/demoCampbell2Frame8.png" width="300" alt="Campbell diagram 2"> <img src="figs/demoCampbell2Frame11.png" width="300" alt="Campbell diagram 3">
+  <img src="figs/demoCampbell2Frame1.png" width="300" alt="Campbell diagram 1"> <img src="figs/demoCampbell2Frame6.png" width="300" alt="Campbell diagram 2">
 </p><p align="center">
   <img src="figs/demo_modes5.svg" width="300" alt="Mode shapes 1"> <img src="figs/demo_modes6.svg" width="300" alt="Mode shapes 2"> <img src="figs/demo_modes7.svg" width="300" alt="Mode shapes 3"> <img src="figs/demo_modes8.svg" width="300" alt="Mode shapes 4">
 </p><p align="center">
